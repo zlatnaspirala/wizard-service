@@ -1,0 +1,25 @@
+{
+  "name": "acta-non-verba",
+  "version": "0.0.1",
+  "description": "Running jsffmpeg with ws and http server like a host.",
+  "main": "core.js",
+  "dependencies": {
+    "ws": "^7.4.5"
+  },
+  "devDependencies": {
+    "http-server": "^0.12.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zlatnaspirala/ActaNonVerba"
+  },
+  "keywords": [
+    "test"
+  ],
+  "author": "Nikola Lukic",
+  "license": "MIT",
+  "homepage": "https://maximumroulette.com"
+}
