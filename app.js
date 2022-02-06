@@ -1,9 +1,5 @@
 
-
 // HOSTING TEST
-var https = require('https');
-var express = require("express");
-var fs = require("fs");
 // create an express app
 const express = require("express")
 const app = express()
