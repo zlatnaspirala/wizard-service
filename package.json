@@ -4,6 +4,7 @@
   "description": "Running jsffmpeg with ws and http server like a host.",
   "main": "core.js",
   "dependencies": {
+    "express": "^4.17.2",
     "ws": "^7.4.5"
   },
   "devDependencies": {
