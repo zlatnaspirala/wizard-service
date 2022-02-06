@@ -35,7 +35,7 @@ function initCoordinator() {
 
   function doSend(message) {
     writeToScreen("SENT: " + message);
-    websocket.send(message);
+    controller.send(message);
   }
 
   function writeToScreen(message) {
@@ -55,6 +55,7 @@ function initCoordinator() {
       x: e.clientX,
       y: e.clientY,
     };
+    doSend(construct_point);
     console.log(construct_point)
   }
 

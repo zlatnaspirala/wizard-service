@@ -12,9 +12,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": "14.x"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zlatnaspirala/ActaNonVerba"
+    "url": "git+https://github.com/zlatnaspirala/XYCoordinator"
   },
   "keywords": [
     "test"
