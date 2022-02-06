@@ -1,3 +1,25 @@
+
+
+// HOSTING TEST
+var https = require('https');
+var express = require("express");
+var fs = require("fs");
+// create an express app
+const express = require("express")
+const app = express()
+
+// use the express-static middleware
+app.use(express.static("public"))
+
+// define the first route
+app.get("/", function (req, res) {
+  res.send("<h1>Hello World nidza !</h1>")
+})
+
+// start the server listening for requests
+app.listen(process.env.PORT || 3000, 
+	() => console.log("Server is running..."));
+
 // Use the websocket-relay to serve a raw MPEG-TS over WebSockets. You can use
 // ffmpeg to feed the relay. ffmpeg -> websocket-relay -> browser
 // Example:
