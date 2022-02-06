@@ -7,7 +7,7 @@ const express = require("express")
 const app = express()
 
 // use the express-static middleware
-app.use(express.static("public"))
+app.use(express.static("./public"))
 
 // define the first route
 app.get("/", function (req, res) {
@@ -15,7 +15,7 @@ app.get("/", function (req, res) {
 })
 
 // start the server listening for requests
-app.listen(process.env.PORT || 80, 
+app.listen(process.env.PORT || 443, 
 	() => console.log("Server is running..."));
 
 // Use the websocket-relay to serve a raw MPEG-TS over WebSockets. You can use
