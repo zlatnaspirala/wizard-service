@@ -7,11 +7,12 @@ const express = require("express")
 const app = express()
 
 // use the express-static middleware
-app.use(express.static("./public"))
+// express.static("/var/www/html/")
+app.use(express.static("public"))
 
 // define the first route
-app.get("/", function (req, res) {
-  // res.send("<h1>Hello World nidza!</h1>")
+app.get("/welcome", function (req, res) {
+  res.send("<h1>Hello World nidza!</h1>")
 })
 
 // start the server listening for requests
