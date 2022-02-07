@@ -6,11 +6,16 @@
  */
 
 function initCoordinator() {
-    
+
+  var wsProtocol = 'ws';
+  if (window.location.protocol.indexOf("https") != -1) {
+    wsProtocol = 'wss';
+  }
+
   var button = document.querySelector("button"),
       output = document.querySelector("#output"),
       textarea = document.querySelector("textarea"),
-      wsUri = "ws://127.0.0.1:20002",
+      wsUri = wsProtocol + "://127.0.0.1:20002",
       controller = new WebSocket(wsUri);
 
   button.addEventListener("click", _n);
