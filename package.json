@@ -1,7 +1,7 @@
 {
-  "name": "acta-non-verba",
-  "version": "0.0.1",
-  "description": "Running jsffmpeg with ws and http server like a host.",
+  "name": "wizard-relay",
+  "version": "1.0.0",
+  "description": "Wizard Web Remote Controller, Welcome.",
   "main": "core.js",
   "dependencies": {
     "express": "^4.17.2",
