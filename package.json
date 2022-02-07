@@ -4,8 +4,10 @@
   "description": "Wizard Web Remote Controller, Welcome.",
   "main": "core.js",
   "dependencies": {
+    "bufferutil": "^4.0.6",
     "express": "^4.17.2",
-    "ws": "^7.4.5"
+    "utf-8-validate": "^5.0.8",
+    "ws": "^7.5.6"
   },
   "devDependencies": {
     "http-server": "^0.12.3"
