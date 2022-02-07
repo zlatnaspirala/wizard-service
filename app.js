@@ -47,7 +47,7 @@ var STREAM_SECRET = 'supersecret',
 	WEBSOCKET_PORT =  8082,
 	RECORD_STREAM = false;
 
-// Websocket Server { port: 8080 }
+// Websocket Server
 var socketServer = new WebSocket.Server({port: WEBSOCKET_PORT, perMessageDeflate: false});
 socketServer.connectionCount = 0;
 socketServer.on('connection', function(socket, upgradeReq) {
@@ -74,7 +74,7 @@ socketServer.broadcast = function(data) {
 };
 
 // HTTP Server to accept incomming MPEG-TS Stream from ffmpeg
-var streamServer = https.createServer( function(request, response) {
+var streamServer = http.createServer( function(request, response) {
 	var params = request.url.substr(1).split('/');
 
 	if (params[0] !== STREAM_SECRET) {
