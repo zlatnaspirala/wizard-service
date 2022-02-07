@@ -27,11 +27,12 @@ app.listen(process.env.PORT || 443,
 
 var fs = require('fs'),
 	http = require('http'),
+	https = require('https'),
 	WebSocket = require('ws');
 
 
 	require("./coordinator");
-	
+
 	/*
 if (process.argv.length < 3) {
 	console.log(
@@ -73,7 +74,7 @@ socketServer.broadcast = function(data) {
 };
 
 // HTTP Server to accept incomming MPEG-TS Stream from ffmpeg
-var streamServer = http.createServer( function(request, response) {
+var streamServer = https.createServer( function(request, response) {
 	var params = request.url.substr(1).split('/');
 
 	if (params[0] !== STREAM_SECRET) {
