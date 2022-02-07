@@ -29,6 +29,9 @@ var fs = require('fs'),
 	http = require('http'),
 	WebSocket = require('ws');
 
+
+	require("./coordinator");
+	
 	/*
 if (process.argv.length < 3) {
 	console.log(
@@ -43,7 +46,7 @@ var STREAM_SECRET = 'supersecret',
 	WEBSOCKET_PORT =  8082,
 	RECORD_STREAM = false;
 
-// Websocket Server
+// Websocket Server { port: 8080 }
 var socketServer = new WebSocket.Server({port: WEBSOCKET_PORT, perMessageDeflate: false});
 socketServer.connectionCount = 0;
 socketServer.on('connection', function(socket, upgradeReq) {
