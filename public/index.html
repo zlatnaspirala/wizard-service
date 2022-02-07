@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>JSMpeg Stream Client</title>
+    <title>Wizard Remote Control</title>
     <style type="text/css">
       html,
       body {
@@ -26,13 +26,11 @@
     </style>
   </head>
   <body>
-    <div
-      style="position: absolute; left: 0; top: 0; width: 200px; height: 200px"
-    >
-      CONTROLLER
-			<button> CLICK</button>
-			<textarea> </textarea>
-		  <div id="output"></div>
+    <div style="position: absolute; left: 0; top: 0; width: 200px; height: 200px">
+     Wizard 1.0 Client part
+     <button> CLICK</button>
+     <textarea> </textarea>
+     <div id="output"></div>
     </div>
     <canvas id="video-canvas"></canvas>
     <script type="text/javascript" src="jsmpeg.min.js"></script>
@@ -50,8 +48,12 @@
         player = null;
 
       function runStream() {
+        var wsProtocol = 'ws';
+        if (window.location.protocol.indexOf("https") != -1) {
+          wsProtocol = 'wss';
+        }
         canvas = document.getElementById("video-canvas");
-        url = "ws://" + document.location.hostname + ":8082/";
+        url = wsProtocol + "://" + document.location.hostname + ":8082/";
         player = new JSMpeg.Player(url, {canvas: canvas});
         window.removeEventListener("click", runStream, false);
       }
