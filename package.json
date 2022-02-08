@@ -1,11 +1,12 @@
 {
-  "name": "wizard-relay",
+  "name": "wizard",
   "version": "1.0.0",
   "description": "Wizard Web Remote Controller, Welcome.",
   "main": "core.js",
   "dependencies": {
     "bufferutil": "^4.0.6",
     "express": "^4.17.2",
+    "express-ws": "^5.0.2",
     "utf-8-validate": "^5.0.8",
     "ws": "^7.5.6"
   },

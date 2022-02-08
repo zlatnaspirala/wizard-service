@@ -1,9 +1,12 @@
-runtime: nodejs16 # or another supported version
+runtime: nodejs # or another supported version
 
-instance_class: F2
+env: flex
 
 env_variables:
   BUCKET_NAME: "wizard"
+
+manual_scaling:
+  instances: 1
 
 network:
   session_affinity: true
