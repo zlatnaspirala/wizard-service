@@ -9,7 +9,7 @@ function initCoordinator() {
 
   var wsProtocol = 'ws';
   if (window.location.protocol.indexOf("https") != -1) {
-    wsProtocol = 'wss';
+    // wsProtocol = 'wss';
   }
 
   var button = document.querySelector("button"),
