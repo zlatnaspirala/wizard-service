@@ -16,7 +16,8 @@ app.get("/welcome", function (req, res) {
 })
 
 // start the server listening for requests
-app.listen(process.env.PORT || 443, 
+// app.listen(process.env.PORT || 443, 
+app.listen(8080, 
 	() => console.log("Server is running..."));
 
 // Use the websocket-relay to serve a raw MPEG-TS over WebSockets. You can use
