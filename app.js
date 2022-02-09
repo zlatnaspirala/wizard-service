@@ -8,9 +8,9 @@ const app = express()
 
 // use the express-static middleware
 // express.static("/var/www/html/")
-// app.use(express.static("public"))
-const INDEX = 'public/index.html';
-app.use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+app.use(express.static("public"))
+// const INDEX = 'public/index.html';
+// app.use((req, res) => res.sendFile(INDEX, { root: __dirname }))
 
 // define the first route
 app.get("/welcome", function (req, res) {
