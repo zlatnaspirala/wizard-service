@@ -1,23 +1,23 @@
 
 
 // HOSTING TEST
-var https = require('https');
-var express = require("express");
-var fs = require("fs");
+ 
 // create an express app
 const express = require("express")
 const app = express()
 
 // use the express-static middleware
+// express.static("/var/www/html/")
 app.use(express.static("public"))
 
 // define the first route
-app.get("/", function (req, res) {
-  res.send("<h1>Hello World nidza !</h1>")
+app.get("/welcome", function (req, res) {
+  res.send("<h1>Hello World nidza!</h1>")
 })
 
 // start the server listening for requests
-app.listen(process.env.PORT || 8080, 
+// app.listen(process.env.PORT || 443, 
+app.listen(8080, 
 	() => console.log("Server is running..."));
 
 // Use the websocket-relay to serve a raw MPEG-TS over WebSockets. You can use
@@ -28,19 +28,24 @@ app.listen(process.env.PORT || 8080,
 
 var fs = require('fs'),
 	http = require('http'),
+	https = require('https'),
 	WebSocket = require('ws');
 
+
+	require("./coordinator");
+
+	/*
 if (process.argv.length < 3) {
 	console.log(
 		'Usage: \n' +
 		'node websocket-relay.js <secret> [<stream-port> <websocket-port>]'
 	);
 	process.exit();
-}
+}*/
 
-var STREAM_SECRET = process.argv[2],
-	STREAM_PORT = process.argv[3] || 8081,
-	WEBSOCKET_PORT = process.argv[4] || 8082,
+var STREAM_SECRET = 'supersecret',
+	STREAM_PORT = 8081,
+	WEBSOCKET_PORT =  8082,
 	RECORD_STREAM = false;
 
 // Websocket Server

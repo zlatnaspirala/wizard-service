@@ -34,7 +34,7 @@
              console.log("One wizard server on line .... with id -> ", getID);
              ws.info._type = "WIZARD-SERVER";
              ws.info.secret = getID;
-             fs.copyFile('secret.html', 'secret-wizard-' + getID + '.html', (err) => {
+             fs.copyFile('./public/secret.html', './public/secret-wizard-' + getID + '.html', (err) => {
                  if (err) throw err;
                  console.log('Secret link created for ', getID);
              });

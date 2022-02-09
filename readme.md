@@ -23,5 +23,5 @@ heroku git:remote -a wizard-relay
 
 Origin run
 ```js
-  node relay.js supersecret 8081 8082
+  node app.js supersecret 8081 8082
 ```
