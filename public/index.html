@@ -53,7 +53,7 @@
       function runStream() {
         var wsProtocol = 'ws';
         if (window.location.protocol.indexOf("https") != -1) {
-          // wsProtocol = 'wss';
+          wsProtocol = 'wss';
         }
         canvas = document.getElementById("video-canvas");
         url = wsProtocol + "://" + document.location.hostname + ":8082/";
