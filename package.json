@@ -14,8 +14,9 @@
     "http-server": "^0.12.3"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "node app.js supersecret 8081 8082",
     "relay": "node app.js supersecret 8081 8082",
+    "xy": "node xy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
