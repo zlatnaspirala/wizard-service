@@ -60,7 +60,9 @@ function initCoordinator() {
       x: e.clientX,
       y: e.clientY,
     };
-    doSend(construct_point);
+    var simple = e.clientX + ";" + e.clientY;
+    // doSend(JSON.stringify(construct_point));
+    doSend(simple);
     console.log(construct_point)
   }
 
