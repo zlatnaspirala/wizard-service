@@ -79,6 +79,8 @@ var streamServer = http.createServer( function(request, response) {
 	var params = request.url.substr(1).split('/');
 
 	console.log(`ON RESPONSE __url_____  ${request.url}`);
+	console.log("ON RESPONSE params  " + params);
+
 
 	if (params[0] !== STREAM_SECRET) {
 		console.log(
