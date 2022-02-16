@@ -69,7 +69,7 @@ socketServer.on('connection', function(socket, upgradeReq) {
 
 socketServer.broadcast = function(data) {
 
-	console.log(">>>>>>> >>>>>> BROADCAST >>>>test lenght >>>", socketServer.clients.length);
+	// console.log(">>>>>>> >>>>>> BROADCAST >>>>test lenght >>>", socketServer.clients.length);
 
 	socketServer.clients.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
