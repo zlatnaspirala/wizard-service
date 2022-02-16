@@ -45,6 +45,7 @@ var STREAM_SECRET = process.argv[2],
 // Websocket Server
 var socketServer = new WebSocket.Server({port: WEBSOCKET_PORT, perMessageDeflate: false});
 socketServer.connectionCount = 0;
+
 socketServer.on('connection', function(socket, upgradeReq) {
 	socketServer.connectionCount++;
 	console.log('New WebSocket Connection: test HEADERS arg socket => ', (upgradeReq || socket.upgradeReq).headers);
@@ -63,7 +64,9 @@ socketServer.on('connection', function(socket, upgradeReq) {
 		);
 	});
 });
+
 socketServer.broadcast = function(data) {
+	
 	socketServer.clients.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(data);
