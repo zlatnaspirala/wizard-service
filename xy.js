@@ -21,6 +21,7 @@ wss.on('connection', function connection(ws) {
 
     ws.info = {};
     ws.info.id = wss.createUniqueID();
+
     console.info(" New user with id -> ", ws.info);
 
     ws.on('message', function incoming(data) {

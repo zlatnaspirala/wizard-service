@@ -12,10 +12,13 @@ function initCoordinator() {
     wsProtocol = 'wss';
   }
 
+  var instanceId = location.href.split("wizard-")[1].split('.ht')[0];
+  console.log("Hello there i found my link. My instance id is -> ", instanceId);
+
   var button = document.querySelector("button"),
       output = document.querySelector("#output"),
       textarea = document.querySelector("textarea"),
-      wsUri = wsProtocol + "://" + window.location.hostname + ":20002",
+      wsUri = wsProtocol + "://" + window.location.hostname + ":20002/" + instanceId,
       controller = new WebSocket(wsUri);
 
   button.addEventListener("click", _n);

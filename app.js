@@ -42,6 +42,10 @@ var STREAM_SECRET = process.argv[2],
 	WEBSOCKET_PORT = process.argv[4] || 8082,
 	RECORD_STREAM = false;
 
+	// TEST
+var MAXIMUM_USERS = 2;
+
+
 // Websocket Server
 var socketServer = new WebSocket.Server({port: WEBSOCKET_PORT, perMessageDeflate: false});
 socketServer.connectionCount = 0;
@@ -81,7 +85,7 @@ var streamServer = http.createServer( function(request, response) {
 	console.log(`ON RESPONSE __url_____  ${request.url}`);
 	console.log("ON RESPONSE params  " + params);
 
-
+	// TEST FIRST SUPER SECRET
 	if (params[0] !== STREAM_SECRET) {
 		console.log(
 			'Failed Stream Connection: '+ request.socket.remoteAddress + ':' +
@@ -91,11 +95,8 @@ var streamServer = http.createServer( function(request, response) {
 	}
 
 	response.connection.setTimeout(0);
-	console.log(
-		'Stream Connected: ' + 
-		request.socket.remoteAddress + ':' +
-		request.socket.remotePort
-	);
+	console.log('Stream Connected: ' + request.socket.remoteAddress + ':' +request.socket.remotePort);
+
 	request.on('data', function(data){
 		socketServer.broadcast(data);
 		if (request.socket.recording) {
