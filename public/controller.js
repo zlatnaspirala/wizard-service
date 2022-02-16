@@ -45,12 +45,12 @@ function initCoordinator() {
   };
 
   function doSend(message) {
-    writeToScreen("SENT: " + message);
+    // writeToScreen("SENT: " + message);
     controller.send(message);
   }
 
   function writeToScreen(message) {
-    output.insertAdjacentHTML("afterbegin", "<div>" + message + "</div>");
+    output.innerHTML = "<div>" + message + "</div>";
   }
 
   function _n() {
