@@ -14,7 +14,7 @@
       #output {
         overflow: auto;
         background-color: brown;
-        color: aliceblue;
+        color:cornsilk;
       }
       #output > p {
         overflow-wrap: break-word;
@@ -38,13 +38,13 @@
     <script type="text/javascript" src="jsmpeg.min.js"></script>
     <script defer type="text/javascript" src="controller.js"></script>
     <script type="text/javascript">
-      window.addEventListener("load", function () {   
+      window.addEventListener("load", function () {
         initCoordinator();
       }, false);
 
       console.log("------------------------------- ");
-      // heroku labs:enable websockets
       console.log("------------------------------- ");
+
       console.log("Test Player -> ", JSMpeg.Player);
       var initialRun = true,
         justOnce = true,
@@ -55,7 +55,7 @@
       function runStream() {
         var wsProtocol = 'ws';
         if (window.location.protocol.indexOf("https") != -1) {
-          wsProtocol = 'wss';
+          // wsProtocol = 'wss';
         }
         canvas = document.getElementById("video-canvas");
         url = wsProtocol + "://" + document.location.hostname + ":8082/";
