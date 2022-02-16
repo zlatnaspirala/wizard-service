@@ -15,7 +15,7 @@ function initCoordinator() {
   var button = document.querySelector("button"),
       output = document.querySelector("#output"),
       textarea = document.querySelector("textarea"),
-      wsUri = wsProtocol + "://" + window.location.hostname + ":20002" + "/NIKOLANIKOLANIKOLA",
+      wsUri = wsProtocol + "://" + window.location.hostname + ":20002",
       controller = new WebSocket(wsUri);
 
   button.addEventListener("click", _n);
