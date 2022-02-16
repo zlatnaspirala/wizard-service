@@ -69,6 +69,8 @@ socketServer.on('connection', function(socket, upgradeReq) {
 
 socketServer.broadcast = function(data) {
 
+	console.log(">>>>>>> >>>>>> BROADCAST >>>>>>>", socketServer.clients);
+
 	socketServer.clients.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(data);
