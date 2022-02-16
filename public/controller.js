@@ -22,7 +22,13 @@ function initCoordinator() {
   window.addEventListener("mousemove", _i);
 
   controller.onopen = function (e) {
-    writeToScreen("CONNECTED");
+    writeToScreen("CONNECTED e => ", e);
+    console.log(">>>>>>>>>>>>>>>>e>   ", e);
+    console.log(">>>>>>>>>>>>>>>>e>   ", e.origin);
+    console.log(">>>>>>>>>>>>>>>>e>   ", e.resource);
+    
+
+    
     doSend("WebSocket controller");
   };
 
@@ -44,7 +50,7 @@ function initCoordinator() {
   }
 
   function writeToScreen(message) {
-    output.insertAdjacentHTML("afterbegin", "<p>" + message + "</p>");
+    output.insertAdjacentHTML("afterbegin", "<div>" + message + "</div>");
   }
 
   function _n() {
