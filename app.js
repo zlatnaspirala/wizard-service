@@ -47,7 +47,9 @@ var socketServer = new WebSocket.Server({port: WEBSOCKET_PORT, perMessageDeflate
 socketServer.connectionCount = 0;
 socketServer.on('connection', function(socket, upgradeReq) {
 	socketServer.connectionCount++;
-	console.log('New WebSocket Connection: test arg socket => ', socket);
+	console.log('New WebSocket Connection: test arg socket => ', (upgradeReq || socket.upgradeReq).socket);
+	console.log('New WebSocket Connection: test arg socket => ', (upgradeReq || socket.upgradeReq).socket.origin);
+
 	console.log(
 		'New WebSocket Connection: ', 
 		(upgradeReq || socket.upgradeReq).socket.remoteAddress,
