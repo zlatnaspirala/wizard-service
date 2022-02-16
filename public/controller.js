@@ -5,15 +5,12 @@
  * for WebControlSystem. Writen in ECMA5 Vanilla JS.
  */
 
-function initCoordinator() {
+function initCoordinator(instanceId) {
 
   var wsProtocol = 'ws';
   if (window.location.protocol.indexOf("https") != -1) {
     wsProtocol = 'wss';
   }
-
-  var instanceId = location.href.split("wizard-")[1].split('.ht')[0];
-  console.log("Hello there i found my link. My instance id is -> ", instanceId);
 
   var button = document.querySelector("button"),
       output = document.querySelector("#output"),

@@ -42,9 +42,7 @@ var STREAM_SECRET = process.argv[2],
 	WEBSOCKET_PORT = process.argv[4] || 8082,
 	RECORD_STREAM = false;
 
-	// TEST
 var MAXIMUM_USERS = 2;
-
 
 // Websocket Server
 var socketServer = new WebSocket.Server({port: WEBSOCKET_PORT, perMessageDeflate: false});

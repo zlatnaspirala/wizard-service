@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Wizard Remote Control</title>
+    <title>Wizard Remote Control welcome page</title>
     <style type="text/css">
       html,
       body {
@@ -30,44 +30,11 @@
   <body>
     <div style="position: absolute; left: 0; top: 0; width: 200px; height: 200px">
      Wizard 1.0 Client part
-     <button> CLICK</button>
-     <textarea> </textarea>
-     <div id="output"></div>
     </div>
-    <canvas id="video-canvas"></canvas>
-    <script type="text/javascript" src="jsmpeg.min.js"></script>
-    <script defer type="text/javascript" src="controller.js"></script>
     <script type="text/javascript">
-      window.addEventListener("load", function () {
-        initCoordinator();
-      }, false);
-
       console.log("------------------------------- ");
+      console.log("-Hi there , nothing here------- ");
       console.log("------------------------------- ");
-
-      console.log("Test Player -> ", JSMpeg.Player);
-      var initialRun = true,
-        justOnce = true,
-        canvas = null,
-        url = null,
-        player = null;
-
-      function runStream() {
-        var wsProtocol = 'ws';
-        if (window.location.protocol.indexOf("https") != -1) {
-          // wsProtocol = 'wss';
-        }
-        canvas = document.getElementById("video-canvas");
-        url = wsProtocol + "://" + document.location.hostname + ":8082/" + "/NIKOLANIKOLANIKOLA";
-        player = new JSMpeg.Player(url, {canvas: canvas});
-        window.removeEventListener("click", runStream, false);
-      }
-
-      if (initialRun) {
-        runStream();
-      } else {
-        window.addEventListener("click", runStream, false);
-      }
     </script>
   </body>
 </html>
