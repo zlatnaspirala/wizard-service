@@ -78,6 +78,8 @@ socketServer.broadcast = function(data) {
 var streamServer = http.createServer( function(request, response) {
 	var params = request.url.substr(1).split('/');
 
+	console.log(`ON RESPONSE __url_____  ${request.url}`);
+
 	if (params[0] !== STREAM_SECRET) {
 		console.log(
 			'Failed Stream Connection: '+ request.socket.remoteAddress + ':' +
