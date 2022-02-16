@@ -26,9 +26,6 @@ function initCoordinator() {
     console.log(">>>>>>>>>>>>>>>>e>   ", e);
     console.log(">>>>>>>>>>>>>>>>e>   ", e.origin);
     console.log(">>>>>>>>>>>>>>>>e>   ", e.resource);
-    
-
-    
     doSend("WebSocket controller");
   };
 
@@ -69,7 +66,7 @@ function initCoordinator() {
     var simple = e.clientX + ";" + e.clientY;
     // doSend(JSON.stringify(construct_point));
     doSend(simple);
-    console.log(construct_point)
+    // console.log(construct_point)
   }
 
 }
