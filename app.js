@@ -49,7 +49,7 @@ socketServer.connectionCount = 0;
 socketServer.on('connection', function(socket, upgradeReq) {
 	socketServer.connectionCount++;
 	console.log('New WebSocket Connection: test HEADERS arg socket => ', (upgradeReq || socket.upgradeReq).headers);
-	// console.log('New WebSocket Connection: test2 arg socket => ', (upgradeReq || socket.upgradeReq).socket.origin);
+	console.log(`Conn Url ${upgradeReq.url}`);
 
 	console.log(
 		'New WebSocket Connection: ', 
@@ -66,7 +66,7 @@ socketServer.on('connection', function(socket, upgradeReq) {
 });
 
 socketServer.broadcast = function(data) {
-	
+
 	socketServer.clients.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(data);
