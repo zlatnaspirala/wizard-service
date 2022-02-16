@@ -48,8 +48,8 @@ socketServer.connectionCount = 0;
 
 socketServer.on('connection', function(socket, upgradeReq) {
 	socketServer.connectionCount++;
-	console.log('New WebSocket Connection: test HEADERS arg socket => ', (upgradeReq || socket.upgradeReq).headers);
-	console.log(`Conn Url ${upgradeReq.url}`);
+	// console.log('New WebSocket Connection: test HEADERS arg socket => ', (upgradeReq || socket.upgradeReq).headers);
+	console.log(`Conn Url on websocket ->>>>>>>>>>>>>>>>>> ${upgradeReq.url}`);
 
 	console.log(
 		'New WebSocket Connection: ', 
