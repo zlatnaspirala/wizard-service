@@ -26,17 +26,16 @@ function initCoordinator(instanceId) {
 
   controller.onopen = function (e) {
     writeToScreen("CONNECTED e => ", e);
-    console.log(">>>>>>>>>>>>>>>>e>   ", e);
-    console.log(">>>>>>>>>>>>>>>>e>   ", e.origin);
-    console.log(">>>>>>>>>>>>>>>>e>   ", e.resource);
     doSend("WebSocket controller");
   };
 
   controller.onclose = function (e) {
+    console.log("DISCONNECTED")
     writeToScreen("DISCONNECTED");
   };
 
   controller.onmessage = function (e) {
+    console.log("onmessage")
     writeToScreen("<span>RESPONSE: " + e.data + "</span>");
   };
 
