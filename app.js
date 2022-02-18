@@ -43,6 +43,7 @@ var STREAM_SECRET = process.argv[2],
 	RECORD_STREAM = false;
 
 var MAXIMUM_USERS = 1;
+var STREAM_ARRAY = [];
 
 // Websocket Server
 var socketServer = new WebSocket.Server({port: WEBSOCKET_PORT, perMessageDeflate: false});
@@ -101,7 +102,7 @@ var streamServer = http.createServer( function(request, response) {
 	}
 
 	// TEST LIMIT
-	if (socketServer.connectionCount >= MAXIMUM_USERS) {
+	if (STREAM_ARRAY.length > 0) {
 		console.log(
 			'Failed Stream Connection: '+ request.socket.remoteAddress + ':' +
 			request.socket.remotePort + ' - reached limit.'
@@ -111,8 +112,15 @@ var streamServer = http.createServer( function(request, response) {
 
 	response.connection.setTimeout(0);
 
-	console.log('Stream ID: ' + params[1]);
+	console.log('Stream ID added to the STREAM_ARRAY : ' + params[1]);
 	console.log('Stream Connected: ' + request.socket.remoteAddress + ':' +request.socket.remotePort);
+
+	STREAM_ARRAY.push(params[1]);
+	console.log('STREAM_ARRAY : ' + STREAM_ARRAY[0]);
+
+	request.on('close', function(e){
+		console.log('EXPERIMENTAL close: ' + STREAM_ARRAY[0]);
+	});
 
 	request.on('data', function(data){
 		socketServer.broadcast(data);
@@ -120,8 +128,16 @@ var streamServer = http.createServer( function(request, response) {
 			request.socket.recording.write(data);
 		}
 	});
-	request.on('end',function(){
-		console.log('close');
+	request.on('end',function(e) {
+		console.log('close stream request ! e -> ', e);
+		console.log('close stream request ! sloce socket etst -> ', request.socket.close);
+
+		// TEST 
+		/* var index = STREAM_ARRAY.indexOf(item);
+		if (index !== -1) {
+			array.splice(index, 1);
+		} */
+
 		if (request.socket.recording) {
 			request.socket.recording.close();
 		}

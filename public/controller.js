@@ -18,6 +18,9 @@ function initCoordinator(instanceId) {
       wsUri = wsProtocol + "://" + window.location.hostname + ":20002/" + instanceId,
       controller = new WebSocket(wsUri);
 
+      // make it global
+      window.controller = controller;
+
   button.addEventListener("click", _n);
   window.addEventListener("mousemove", _i);
 
