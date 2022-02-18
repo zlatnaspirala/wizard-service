@@ -1,25 +1,5 @@
 
-###################################
-
-Node part of wizard remote control
-
-##################################
-
-
-Only for heroku:
-```
-npm install --save ws bufferutil utf-8-validate
-```
-
-
-Actions:
-```
-git push heroku main
-heroku git:remote -a wizard-relay
-```
-
-
-
+# Node part of wizard remote control
 
 Origin run
 ```js

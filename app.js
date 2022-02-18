@@ -49,9 +49,17 @@ var socketServer = new WebSocket.Server({port: WEBSOCKET_PORT, perMessageDeflate
 socketServer.connectionCount = 0;
 
 socketServer.on('connection', function(socket, upgradeReq) {
-	socketServer.connectionCount++;
+	
 	// console.log('New WebSocket Connection: test HEADERS arg socket => ', (upgradeReq || socket.upgradeReq).headers);
 	console.log(`Conn Url on [websocket] ->>>>>>>>>>>>>>>>>> ${upgradeReq.url}`);
+
+		// TEST LIMIT
+		if (socketServer.connectionCount >= MAXIMUM_USERS) {
+			console.log(`CLOSE REASON [websocket] LAREADY USED >>>>>>>>> ${upgradeReq.url}`);
+			socket.close();
+		}
+
+		socketServer.connectionCount++;
 
 	console.log(
 		'New WebSocket Connection: ', 
@@ -68,9 +76,7 @@ socketServer.on('connection', function(socket, upgradeReq) {
 });
 
 socketServer.broadcast = function(data) {
-
 	// console.log(">>>>>>> >>>>>> BROADCAST >>>>test lenght >>>", socketServer.clients.length);
-
 	socketServer.clients.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(data);

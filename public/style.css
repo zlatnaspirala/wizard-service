@@ -1,0 +1,28 @@
+html,
+body {
+  background-color: #111;
+  text-align: center;
+}
+textarea {
+  vertical-align: bottom;
+}
+#output {
+  height: 100px;
+  overflow: auto;
+  background-color: brown;
+  color:cornsilk;
+}
+#output > p {
+  overflow-wrap: break-word;
+}
+#output div.error {
+  color: red;
+}
+
+.holder {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100px
+}
