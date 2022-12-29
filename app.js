@@ -1,25 +1,24 @@
-
-
 /**
  * @description Just Hosting.
+ * `https` variant recommended.
  */
 
 var https = require('https');
 var fs = require("fs");
 const express = require("express");
 const app = express();
-app.use(express.static("public"));
-
-// define the first route
-app.get("/", function (req, res) {
-  res.send("<h1>thanks for using goldenspiral software!</h1>");
-})
-
 var serverRunner = null;
-// console.log(">>>>>" + process.platform)
+var options = {};
+const EventEmitter = require('events');
+var eventEmitter = new EventEmitter();
 
-if (process.platform == 'win32') {
-  options = { };
+app.use(express.static("public"));
+app.get("/", function(req, res) {
+  res.send("<h1>thanks for using goldenspiral software!</h1>");
+});
+
+if(process.platform == 'win32') {
+  options = {};
   serverRunner = http;
 } else {
   options = {
@@ -48,7 +47,7 @@ var fs = require('fs'),
   http = require('http'),
   WebSocket = require('ws');
 
-if (process.argv.length < 3) {
+if(process.argv.length < 3) {
   console.log('Usage: \n' + 'node websocket-relay.js <secret> [<stream-port> <websocket-port>]');
   process.exit();
 }
@@ -67,25 +66,26 @@ var STREAM_ARRAY = [];
 var streamServer = serverRunner.createServer(options, function(request, response) {
   var params = request.url.substr(1).split('/');
 
-  console.log(`ON RESPONSE __url_____  ${request.url}`);
-  console.log("ON RESPONSE params  " + params);
+  console.log(`streamServer url  ${request.url}`);
+  console.log("streamServer params  " + params);
 
-  request.on('close', function(e){
+  request.on('close', function(e) {
     STREAM_ARRAY = [];
     // console.log('EXPERIMENTAL close stream detected : clear for now STREAM_ARRAY = []; ',SOCKET_USERS);
     console.log('EXPERIMENTAL close stream detected : kill socket user ', params[1]);
-    if (typeof SOCKET_USERS[params[1]] !== 'undefined') {
+    if(typeof SOCKET_USERS[params[1]] !== 'undefined') {
       console.log('EXPERIMENTAL SOCKET EXIST KILL HIM : kill socket user ', params[1]);
       // SOCKET_USERS[params[1]].send("NIDZA-NIDZA");
       SOCKET_USERS[params[1]].close();
-      eventEmitter.emit('end-stream', { id: params[1]});
+      eventEmitter.emit('end-stream', {id: params[1]});
+      SOCKET_USERS = {};
     }
   });
 
   // TEST FIRST SUPER SECRET
-  if (params[0] !== STREAM_SECRET) {
+  if(params[0] !== STREAM_SECRET) {
     console.log(
-      'Failed Stream Connection: '+ request.socket.remoteAddress + ':' +
+      'Failed Stream Connection: ' + request.socket.remoteAddress + ':' +
       request.socket.remotePort + ' - wrong super secret.'
     );
     response.end();
@@ -93,57 +93,52 @@ var streamServer = serverRunner.createServer(options, function(request, response
   }
 
   // TEST LIMIT
-  if (STREAM_ARRAY.length > 10) {
+  if(STREAM_ARRAY.length > 1) {
     console.log(
-      'Failed Stream Connection: '+ request.socket.remoteAddress + ':' +
+      'Failed Stream Connection: ' + request.socket.remoteAddress + ':' +
       request.socket.remotePort + ' - reached limit.'
     );
-
-    console.log("'TEST _ STREAM_ARRAY.length ", STREAM_ARRAY.length)
     response.end();
-    eventEmitter.emit('end-stream', { id: params[1]});
-    console.log("'TEST _ STREAM_ARRAY.length ", STREAM_ARRAY.length)
-
+    eventEmitter.emit('end-stream', {id: params[1]});
+    console.log("end-stream event! ", STREAM_ARRAY.length)
     return;
   }
 
   response.connection.setTimeout(0);
-
-  console.log('Stream ID added to the STREAM_ARRAY : ' + params[1]);
-  console.log('Stream Connected: ' + request.socket.remoteAddress + ':' +request.socket.remotePort);
-
+  console.log('Stream ID added: ' + params[1]);
+  console.log('Stream Connected: ' + request.socket.remoteAddress + ':' + request.socket.remotePort);
   STREAM_ARRAY.push(params[1]);
-  console.log('STREAM_ARRAY ALSO EMIT TO XY : ' + STREAM_ARRAY[0]);
-  eventEmitter.emit('new-stream', { id: STREAM_ARRAY[STREAM_ARRAY.length-1]})
+  console.log('EMIT TO XY: ' + STREAM_ARRAY[0]);
+  eventEmitter.emit('new-stream', {id: STREAM_ARRAY[STREAM_ARRAY.length - 1]})
 
-  request.on('data', function(data){
+  request.on('data', function(data) {
     socketServer.broadcast(data);
-    if (request.socket.recording) {
+    if(request.socket.recording) {
       request.socket.recording.write(data);
     }
   });
 
-  request.on('end',function(e) {
-    console.log('NEVER NEVER !!!!!!!!!!!!!!!!! ! e -> ', e);
+  request.on('end', function(e) {
+    console.log('NEVER NEVER !!! e -> ', e);
     // TEST 
     /* var index = STREAM_ARRAY.indexOf(item);
     if (index !== -1) {
       array.splice(index, 1);
     } */
-    if (request.socket.recording) {
+    if(request.socket.recording) {
       request.socket.recording.close();
     }
   });
 
   // Record the stream to a local file?
-  if (RECORD_STREAM) {
+  if(RECORD_STREAM) {
     var path = 'recordings/' + Date.now() + '.ts';
     request.socket.recording = fs.createWriteStream(path);
   }
 }).listen(STREAM_PORT);
 
-console.log('Listening for incomming MPEG-TS Stream on https://127.0.0.1:'+STREAM_PORT+'/<secret>');
-console.log('Awaiting WebSocket connections on wss://127.0.0.1:'+WEBSOCKET_PORT+'/');
+console.log('Listening for incomming MPEG-TS Stream on https://127.0.0.1:' + STREAM_PORT + '/<secret>');
+console.log('Awaiting WebSocket connections on wss://127.0.0.1:' + WEBSOCKET_PORT + '/');
 
 var httpsVar = https.createServer(options).listen(WEBSOCKET_PORT);
 
@@ -156,63 +151,79 @@ socketServer.on('connection', function(socket, upgradeReq) {
   console.log(`connection [websocket] -> ${upgradeReq.url}`);
   console.log(`connection [websocket] - STREAM_ARRAY: `, STREAM_ARRAY);
 
+  eventEmitter.socketServer = socketServer;
+
   var incommingSecret = upgradeReq.url.toString().substring(1);
-  console.log(`Conn Url on [websocket] -test incommingSecret >>>>>>>>>>>>>>>>>> ${incommingSecret}`);
-    // TEST LIMIT
-    if (socketServer.connectionCount >= MAXIMUM_USERS) {
-      console.log(`CLOSE REASON [websocket] ALREADY USED, MAXIMUM USAGE REACHED.  -> ${upgradeReq.url}`);
-      socket.close();
-      return;
-    }
+  console.log(`Conn Url on [websocket] -test incommingSecret ${incommingSecret}`);
+  // TEST LIMIT
+  if(socketServer.connectionCount >= MAXIMUM_USERS) {
+    console.log(`CLOSE REASON [websocket] ALREADY USED, MAXIMUM USAGE REACHED.  -> ${upgradeReq.url}`);
+    socket.close();
+    return;
+  }
 
   // just test stream id and socket page id 
-  if (incommingSecret == STREAM_ARRAY[0]) {
-    console.log("Nice and test socket.send ", socket.send);
+  if(incommingSecret == STREAM_ARRAY[0]) {
+    console.log("Nice, test socket.send ", socket.send);
     socket.wizardInstance = STREAM_ARRAY[0];
     SOCKET_USERS[STREAM_ARRAY[0]] = socket;
   } else {
     // for now only one instance 
     console.log(`CLOSE REASON [websocket] STREAM ID NOT THE SAME !!!  -> ` + incommingSecret);
-      socket.close();
-      return;
+    socket.close();
+    return;
   }
 
   socketServer.connectionCount++;
 
-  console.log('New WebSocket Connection: ', 
+  console.log('New WebSocket Connection: ',
     (upgradeReq || socket.upgradeReq).socket.remoteAddress,
     (upgradeReq || socket.upgradeReq).headers['user-agent'],
-    '('+socketServer.connectionCount+' total)'
+    '(' + socketServer.connectionCount + ' total)'
   );
-  socket.on('close', function(code, message){
+  socket.on('close', function(code, message) {
     socketServer.connectionCount--;
-    console.log('Disconnected WebSocket ('+socketServer.connectionCount+' total)');
+    console.log('Disconnected WebSocket (' + SOCKET_USERS + ' total)');
+    SOCKET_USERS = {};
+    console.log('Disconnected WebSocket (' + socketServer.connectionCount + ' total)');
   });
+
+  socketServer.userSocketTest = socket;
+  // endDetectedFromXY
+
 });
 
 socketServer.broadcast = function(data) {
   socketServer.clients.forEach(function each(client) {
     // console.log("client.wizardInstance " + client.wizardInstance)
-		if (typeof client.wizardInstance == 'undefined') {
+    if(typeof client.wizardInstance == 'undefined') {
       console.log(" KILLER SOCKET BECOUSE NO HAVE wizard id ")
-			client.close();
-		}
+      client.close();
+      return;
+    }
 
-    if (client.wizardInstance == STREAM_ARRAY[0] && client.readyState === WebSocket.OPEN) {
+    if(client.wizardInstance == STREAM_ARRAY[0] && client.readyState === WebSocket.OPEN) {
       client.send(data);
     }
   });
 };
 
 
-
 var XYCORD = require('./xy');
-
-const EventEmitter = require('events');
-const eventEmitter = new EventEmitter ();
 
 eventEmitter.on('xy-new-user', (e) => {
   console.log('STREAM EVENT EMITTER !!', e.name);
+});
+
+
+eventEmitter.on('endDetectedFromXY', function(e) {
+  console.log('STREAM JUST CLEAN STREAM ! ', e);
+
+  console.log('WHAT IS socketServer!', socketServer);
+  console.log('WHAT IS this!', this);
+
+  // socketServer.userSocketTest.close();
+  console.log('WHAT IS 2!!!', socketServer.userSocketTest);
 });
 
 XYCORD.INJECTOR(eventEmitter);

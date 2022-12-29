@@ -6,35 +6,34 @@
 
 const fs = require("fs");
 const WebSocket = require("ws");
+let wss = null;
+let HttpsServer;
+let XYCORDSOCKS = {};
+let eventEmitter;
+let isSSL = true;
 
-
-var XYCORDSOCKS = {};
-var eventEmitter;
-
-const HttpsServer = require('https').createServer;
-
-if (process.platform == 'win32') {
+if(process.platform == 'win32') {
   options = {};
 } else {
   options = {
     key: fs.readFileSync("/etc/letsencrypt/live/maximumroulette.com/privkey.pem"),
     cert: fs.readFileSync("/etc/letsencrypt/live/maximumroulette.com/fullchain.pem")
   };
- 
-  console.log('# SSL FOR XY')
+  console.log('#SSL XY')
 }
 
-var server = HttpsServer(options, function(request, response) {
+if(isSSL == true) {
+  HttpsServer = require('https').createServer;
+  var server = HttpsServer(options, function(request, response) {
+    response.connection.setTimeout(0);
+    console.log('XY TEST SSL CONNECT');
+  }).listen(20002);
+  wss = new WebSocket.Server({server: server});
+} else {
+  wss = new WebSocket.Server({port: 20002});
+}
 
-  response.connection.setTimeout(0);
-  console.log('XY TEST SSL CONNECT : ' );
- 
- 
-}).listen(20002);
-
-const wss = new WebSocket.Server({server: server   });
-
-var INJECTOR = function (arg) {
+var INJECTOR = function(arg) {
   eventEmitter = arg;
 
   eventEmitter.on('new-stream', (e) => {
@@ -45,15 +44,15 @@ var INJECTOR = function (arg) {
     console.log('STREAM END  XY ->>>', e.id);
     console.log('STREAM END  EXPLORE1 ->>>', typeof XYCORDSOCKS[e.id]);
     console.log('STREAM END  EXPLORE2 ->>>', typeof XYCORDSOCKS[e.id + "/STREAMER"]);
-    if (XYCORDSOCKS[e.id + "/STREAMER"] && XYCORDSOCKS[e.id + "/STREAMER"].close) XYCORDSOCKS[e.id + "/STREAMER"].close();
-    if (XYCORDSOCKS[e.id] && XYCORDSOCKS[e.id].close) XYCORDSOCKS[e.id].close();
+    if(XYCORDSOCKS[e.id + "/STREAMER"] && XYCORDSOCKS[e.id + "/STREAMER"].close) XYCORDSOCKS[e.id + "/STREAMER"].close();
+    if(XYCORDSOCKS[e.id] && XYCORDSOCKS[e.id].close) XYCORDSOCKS[e.id].close();
     console.log('STREAM END  AFTER ALL');
   });
 
   console.log("Emiiteter" + eventEmitter);
 };
 
-wss.createUniqueID = function () {
+wss.createUniqueID = function() {
   function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)
       .toString(16)
@@ -67,8 +66,8 @@ wss.on("connection", function connection(ws, upgradeReq) {
   var incommingSecret = upgradeReq.url.toString().substring(1);
   console.log(`Conn Url on [XY] -test incommingSecret >>>>>>>>>>>>>>>>>> ${incommingSecret}`);
 
-  if (incommingSecret == '') {
-    console.log(`[close] Conn Url on [XY] COMES FROM STREMER HOST DESK IS EMPTY POTENCILA DANGERUS ! -> ${incommingSecret}`);
+  if(incommingSecret == '') {
+    console.log(`[close] Conn Url on [XY] COMES FROM STREMER HOST DESK IS EMPTY POTENCIAL DANGERUS! -> ${incommingSecret}`);
     ws.close();
     return;
   }
@@ -80,17 +79,17 @@ wss.on("connection", function connection(ws, upgradeReq) {
 
   ws.on("message", function incoming(data) {
     var buf = Buffer.from(data);
-    console.log("MESSAGE DATA -> ", buf.toString());
+    // console.log("->", buf.toString());
 
-    if (buf.toString().indexOf("WIZARD-NIDZA-") !== -1) {
+    if(buf.toString().indexOf("WIZARD-NIDZA-") !== -1) {
       var getID = buf.toString().replace("WIZARD-NIDZA-", "");
       // console.log("One wizard client with id -> ", getID);
       ws.info._type = "WIZARD-SERVER";
       ws.info.secret = getID;
       var constPath = "./public/secret-wizard-" + getID + ".html";
-      if (!fs.existsSync(constPath)) {
+      if(!fs.existsSync(constPath)) {
         fs.copyFile("secret.html", constPath, err => {
-          if (err) throw err;
+          if(err) throw err;
           console.log("Secret link created for ", getID);
         });
         return;
@@ -100,16 +99,24 @@ wss.on("connection", function connection(ws, upgradeReq) {
       return;
     }
 
-    if (XYCORDSOCKS[incommingSecret].readyState === WebSocket.OPEN) {
+    if(XYCORDSOCKS[incommingSecret].readyState === WebSocket.OPEN) {
       XYCORDSOCKS[incommingSecret].send(data);
     }
 
   });
 
   // detect close
-  ws.on("close", function (code, message) {
+  ws.on("close", function(code, message) {
     console.log("Disconnected XY WebSocket (code err) => ", code);
     console.log("Disconnected XY WebSocket (message err) => ", message);
+    eventEmitter.emit('endDetectedFromXY', {
+      detail: {
+        msg: {
+          code: code,
+          message: message
+        }
+      }
+    });
   });
 });
 
