@@ -8,18 +8,32 @@ var https = require('https');
 var fs = require("fs");
 const express = require("express");
 const app = express();
-
 app.use(express.static("public"));
 
 // define the first route
 app.get("/", function (req, res) {
-  res.send("<h1>Hello World nidza !</h1>");
+  res.send("<h1>thanks for using goldenspiral software!</h1>");
 })
 
-// start the server listening for requests
-app.listen(process.env.PORT || 8080, 
-  () => console.log("Server is running..."));
+var serverRunner = null;
+// console.log(">>>>>" + process.platform)
 
+if (process.platform == 'win32') {
+  options = { };
+  serverRunner = http;
+} else {
+  options = {
+    key: fs.readFileSync("/etc/letsencrypt/live/maximumroulette.com/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/maximumroulette.com/fullchain.pem")
+  };
+  serverRunner = https;
+  console.log('SSL enabled.');
+}
+
+https.createServer(options, app).listen(8080);
+// start the server listening for requests
+// app.listen(process.env.PORT || 8080, 
+//   () => console.log("Server is running..."));
 
 /** 
  * @note 
@@ -39,25 +53,6 @@ if (process.argv.length < 3) {
   process.exit();
 }
 
-var serverRunner = null;
-
-console.log(">>>>>" + process.platform)
-
-if (process.platform == 'win32') {
-  options = {
-
-  };
-  serverRunner = http;
-} else {
-  options = {
-    key: fs.readFileSync("/etc/letsencrypt/live/maximumroulette.com/privkey.pem"),
-    cert: fs.readFileSync("/etc/letsencrypt/live/maximumroulette.com/fullchain.pem")
-  };
-  serverRunner = https;
-  console.log('# SSL ')
-}
-
-
 var STREAM_SECRET = process.argv[2],
   STREAM_PORT = process.argv[3] || 8081,
   WEBSOCKET_PORT = process.argv[4] || 8082,
@@ -66,65 +61,6 @@ var STREAM_SECRET = process.argv[2],
 var MAXIMUM_USERS = 1;
 var SOCKET_USERS = {};
 var STREAM_ARRAY = [];
-
-server =   serverRunner.createServer(options)
-
-// Websocket Server
-var socketServer = new WebSocket.Server({server: server /*, perMessageDeflate: false*/});
-socketServer.connectionCount = 0;
-
-socketServer.on('connection', function(socket, upgradeReq) {
-
-  console.log(`connection [websocket] -> ${upgradeReq.url}`);
-  console.log(`connection [websocket] - STREAM_ARRAY: `, STREAM_ARRAY);
-
-  var incommingSecret = upgradeReq.url.toString().substring(1);
-  console.log(`Conn Url on [websocket] -test incommingSecret >>>>>>>>>>>>>>>>>> ${incommingSecret}`);
-    // TEST LIMIT
-    if (socketServer.connectionCount >= MAXIMUM_USERS) {
-      console.log(`CLOSE REASON [websocket] ALREADY USED, MAXIMUM USAGE REACHED.  -> ${upgradeReq.url}`);
-      socket.close();
-      return;
-    }
-
-  // just test stream id and socket page id 
-  if (incommingSecret == STREAM_ARRAY[0]) {
-    console.log("Nice and test socket.send ", socket.send);
-    socket.wizardInstance = STREAM_ARRAY[0];
-    SOCKET_USERS[STREAM_ARRAY[0]] = socket;
-  } else {
-    // for now only one instance 
-    console.log(`CLOSE REASON [websocket] STREAM ID NOT THE SAME !!!  -> ` + incommingSecret);
-      socket.close();
-      return;
-  }
-
-  socketServer.connectionCount++;
-
-  console.log('New WebSocket Connection: ', 
-    (upgradeReq || socket.upgradeReq).socket.remoteAddress,
-    (upgradeReq || socket.upgradeReq).headers['user-agent'],
-    '('+socketServer.connectionCount+' total)'
-  );
-  socket.on('close', function(code, message){
-    socketServer.connectionCount--;
-    console.log('Disconnected WebSocket ('+socketServer.connectionCount+' total)');
-  });
-});
-
-socketServer.broadcast = function(data) {
-  socketServer.clients.forEach(function each(client) {
-    // console.log("client.wizardInstance " + client.wizardInstance)
-		if (typeof client.wizardInstance == 'undefined') {
-      console.log(" KILLER SOCKET BECOUSE NO HAVE wizard id ")
-			client.close();
-		}
-
-    if (client.wizardInstance == STREAM_ARRAY[0] && client.readyState === WebSocket.OPEN) {
-      client.send(data);
-    }
-  });
-};
 
 
 // HTTP Server to accept incomming MPEG-TS Stream from ffmpeg
@@ -206,8 +142,68 @@ var streamServer = serverRunner.createServer(options, function(request, response
   }
 }).listen(STREAM_PORT);
 
-console.log('Listening for incomming MPEG-TS Stream on http://127.0.0.1:'+STREAM_PORT+'/<secret>');
-console.log('Awaiting WebSocket connections on ws://127.0.0.1:'+WEBSOCKET_PORT+'/');
+console.log('Listening for incomming MPEG-TS Stream on https://127.0.0.1:'+STREAM_PORT+'/<secret>');
+console.log('Awaiting WebSocket connections on wss://127.0.0.1:'+WEBSOCKET_PORT+'/');
+
+var httpsVar = https.createServer(options).listen(WEBSOCKET_PORT);
+
+// Websocket Server
+var socketServer = new WebSocket.Server({server: httpsVar /*, perMessageDeflate: false*/});
+socketServer.connectionCount = 0;
+
+socketServer.on('connection', function(socket, upgradeReq) {
+
+  console.log(`connection [websocket] -> ${upgradeReq.url}`);
+  console.log(`connection [websocket] - STREAM_ARRAY: `, STREAM_ARRAY);
+
+  var incommingSecret = upgradeReq.url.toString().substring(1);
+  console.log(`Conn Url on [websocket] -test incommingSecret >>>>>>>>>>>>>>>>>> ${incommingSecret}`);
+    // TEST LIMIT
+    if (socketServer.connectionCount >= MAXIMUM_USERS) {
+      console.log(`CLOSE REASON [websocket] ALREADY USED, MAXIMUM USAGE REACHED.  -> ${upgradeReq.url}`);
+      socket.close();
+      return;
+    }
+
+  // just test stream id and socket page id 
+  if (incommingSecret == STREAM_ARRAY[0]) {
+    console.log("Nice and test socket.send ", socket.send);
+    socket.wizardInstance = STREAM_ARRAY[0];
+    SOCKET_USERS[STREAM_ARRAY[0]] = socket;
+  } else {
+    // for now only one instance 
+    console.log(`CLOSE REASON [websocket] STREAM ID NOT THE SAME !!!  -> ` + incommingSecret);
+      socket.close();
+      return;
+  }
+
+  socketServer.connectionCount++;
+
+  console.log('New WebSocket Connection: ', 
+    (upgradeReq || socket.upgradeReq).socket.remoteAddress,
+    (upgradeReq || socket.upgradeReq).headers['user-agent'],
+    '('+socketServer.connectionCount+' total)'
+  );
+  socket.on('close', function(code, message){
+    socketServer.connectionCount--;
+    console.log('Disconnected WebSocket ('+socketServer.connectionCount+' total)');
+  });
+});
+
+socketServer.broadcast = function(data) {
+  socketServer.clients.forEach(function each(client) {
+    // console.log("client.wizardInstance " + client.wizardInstance)
+		if (typeof client.wizardInstance == 'undefined') {
+      console.log(" KILLER SOCKET BECOUSE NO HAVE wizard id ")
+			client.close();
+		}
+
+    if (client.wizardInstance == STREAM_ARRAY[0] && client.readyState === WebSocket.OPEN) {
+      client.send(data);
+    }
+  });
+};
+
 
 
 var XYCORD = require('./xy');

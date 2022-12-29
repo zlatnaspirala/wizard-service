@@ -3,48 +3,49 @@
  * @author Nikola Lukic
  * @description Remote Desktop XY Coordinator
  * for WebControlSystem. Writen in ECMA5 Vanilla JS.
+ * @licence GPL v3
  */
 
 function initCoordinator(instanceId) {
 
   var wsProtocol = 'ws';
-  if (window.location.protocol.indexOf("https") != -1) {
+  if(window.location.protocol.indexOf("https") != -1) {
     wsProtocol = 'wss';
   }
 
   var button = document.querySelector("button"),
-      output = document.querySelector("#output"),
-      textarea = document.querySelector("textarea"),
-      wsUri = wsProtocol + "://" + window.location.hostname + ":20002/" + instanceId,
-      controller = new WebSocket(wsUri);
+    output = document.querySelector("#output"),
+    textarea = document.querySelector("textarea"),
+    wsUri = wsProtocol + "://" + window.location.hostname + ":20002/" + instanceId,
+    controller = new WebSocket(wsUri);
 
-      // make it global
-      window.controller = controller;
+  // make it global
+  window.controller = controller;
 
   button.addEventListener("click", _n);
   window.addEventListener("mousemove", _i);
 
-  controller.onopen = function (e) {
-    writeToScreen("CONNECTED e => ", e);
+  controller.onopen = function(e) {
+    writeToScreen("status: connected => ", e);
     doSend("WebSocket controller");
   };
 
-  controller.onclose = function (e) {
-    console.log("DISCONNECTED")
+  controller.onclose = function(e) {
+    console.log("status disconnected ->" , e);
     /**
      * @description
      * Kill page
      * */
-     window.location.href = "http://maximumroulette.com:8080/?r=stream-shutdown-by-host";
-    // writeToScreen("DISCONNECTED");
+    if(window.location.protocol == 'http:') window.location.href = "http://maximumroulette.com:8080/?r=stream-shutdown-by-host";
+    if(window.location.protocol == 'https:') window.location.href = "https://maximumroulette.com:8080/?r=stream-shutdown-by-host";
   };
 
-  controller.onmessage = function (e) {
-    console.log("onmessage")
+  controller.onmessage = function(e) {
+    // console.log("onmessage")
     writeToScreen("<span>RESPONSE: " + e.data + "</span>");
   };
 
-  controller.onerror = function (e) {
+  controller.onerror = function(e) {
     writeToScreen("<span class=error>ERROR:</span> " + e.data);
   };
 
@@ -73,7 +74,6 @@ function initCoordinator(instanceId) {
     var simple = e.clientX + ";" + e.clientY;
     // doSend(JSON.stringify(construct_point));
     doSend(simple);
-    // console.log(construct_point)
   }
 
 }
