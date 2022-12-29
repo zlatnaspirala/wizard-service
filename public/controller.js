@@ -31,7 +31,12 @@ function initCoordinator(instanceId) {
 
   controller.onclose = function (e) {
     console.log("DISCONNECTED")
-    writeToScreen("DISCONNECTED");
+    /**
+     * @description
+     * Kill page
+     * */
+     window.location.href = "http://maximumroulette.com:8080/?r=stream-shutdown-by-host";
+    // writeToScreen("DISCONNECTED");
   };
 
   controller.onmessage = function (e) {

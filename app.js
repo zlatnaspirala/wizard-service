@@ -20,11 +20,15 @@ app.get("/", function (req, res) {
 app.listen(process.env.PORT || 8080, 
   () => console.log("Server is running..."));
 
-// Use the websocket-relay to serve a raw MPEG-TS over WebSockets. You can use
-// ffmpeg to feed the relay. ffmpeg -> websocket-relay -> browser
-// Example:
-// node websocket-relay yoursecret 8081 8082
-// ffmpeg -i <some input> -f mpegts http://localhost:8081/yoursecret
+
+/** 
+ * @note 
+ * Use the websocket-relay to serve a raw MPEG-TS over WebSockets. You can use
+ * ffmpeg to feed the relay. ffmpeg -> websocket-relay -> browser
+ * Example:
+ * node websocket-relay yoursecret 8081 8082
+ * ffmpeg -i <some input> -f mpegts http://localhost:8081/yoursecret
+ * */
 
 var fs = require('fs'),
   http = require('http'),
@@ -35,6 +39,25 @@ if (process.argv.length < 3) {
   process.exit();
 }
 
+var serverRunner = null;
+
+console.log(">>>>>" + process.platform)
+
+if (process.platform == 'win32') {
+  options = {
+
+  };
+  serverRunner = http;
+} else {
+  options = {
+    key: fs.readFileSync("/etc/letsencrypt/live/maximumroulette.com/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/maximumroulette.com/fullchain.pem")
+  };
+  serverRunner = https;
+  console.log('# SSL ')
+}
+
+
 var STREAM_SECRET = process.argv[2],
   STREAM_PORT = process.argv[3] || 8081,
   WEBSOCKET_PORT = process.argv[4] || 8082,
@@ -44,8 +67,10 @@ var MAXIMUM_USERS = 1;
 var SOCKET_USERS = {};
 var STREAM_ARRAY = [];
 
+server =   serverRunner.createServer(options)
+
 // Websocket Server
-var socketServer = new WebSocket.Server({port: WEBSOCKET_PORT, perMessageDeflate: false});
+var socketServer = new WebSocket.Server({server: server /*, perMessageDeflate: false*/});
 socketServer.connectionCount = 0;
 
 socketServer.on('connection', function(socket, upgradeReq) {
@@ -69,7 +94,7 @@ socketServer.on('connection', function(socket, upgradeReq) {
     SOCKET_USERS[STREAM_ARRAY[0]] = socket;
   } else {
     // for now only one instance 
-    console.log(`CLOSE REASON [websocket] STREAM ID NOT THE SAME !!!  -> ${upgradeReq.url}`);
+    console.log(`CLOSE REASON [websocket] STREAM ID NOT THE SAME !!!  -> ` + incommingSecret);
       socket.close();
       return;
   }
@@ -101,8 +126,9 @@ socketServer.broadcast = function(data) {
   });
 };
 
+
 // HTTP Server to accept incomming MPEG-TS Stream from ffmpeg
-var streamServer = http.createServer( function(request, response) {
+var streamServer = serverRunner.createServer(options, function(request, response) {
   var params = request.url.substr(1).split('/');
 
   console.log(`ON RESPONSE __url_____  ${request.url}`);
@@ -110,18 +136,13 @@ var streamServer = http.createServer( function(request, response) {
 
   request.on('close', function(e){
     STREAM_ARRAY = [];
-    console.log('EXPERIMENTAL close stream detected : clear for now STREAM_ARRAY = []; ',STREAM_ARRAY);
+    // console.log('EXPERIMENTAL close stream detected : clear for now STREAM_ARRAY = []; ',SOCKET_USERS);
     console.log('EXPERIMENTAL close stream detected : kill socket user ', params[1]);
-
     if (typeof SOCKET_USERS[params[1]] !== 'undefined') {
-
       console.log('EXPERIMENTAL SOCKET EXIST KILL HIM : kill socket user ', params[1]);
-      SOCKET_USERS[params[1]].send("NIDZA-NIDZA");
-
-      setTimeout( () => {
-        SOCKET_USERS[params[1]].close();
-      }, 10000)
-      
+      // SOCKET_USERS[params[1]].send("NIDZA-NIDZA");
+      SOCKET_USERS[params[1]].close();
+      eventEmitter.emit('end-stream', { id: params[1]});
     }
   });
 
@@ -135,14 +156,18 @@ var streamServer = http.createServer( function(request, response) {
     return;
   }
 
-  console.log("'TEST _ STREAM_ARRAY.length ", STREAM_ARRAY.length)
   // TEST LIMIT
-  if (STREAM_ARRAY.length > 0) {
+  if (STREAM_ARRAY.length > 10) {
     console.log(
       'Failed Stream Connection: '+ request.socket.remoteAddress + ':' +
       request.socket.remotePort + ' - reached limit.'
     );
+
+    console.log("'TEST _ STREAM_ARRAY.length ", STREAM_ARRAY.length)
     response.end();
+    eventEmitter.emit('end-stream', { id: params[1]});
+    console.log("'TEST _ STREAM_ARRAY.length ", STREAM_ARRAY.length)
+
     return;
   }
 
@@ -152,7 +177,8 @@ var streamServer = http.createServer( function(request, response) {
   console.log('Stream Connected: ' + request.socket.remoteAddress + ':' +request.socket.remotePort);
 
   STREAM_ARRAY.push(params[1]);
-  console.log('STREAM_ARRAY : ' + STREAM_ARRAY[0]);
+  console.log('STREAM_ARRAY ALSO EMIT TO XY : ' + STREAM_ARRAY[0]);
+  eventEmitter.emit('new-stream', { id: STREAM_ARRAY[STREAM_ARRAY.length-1]})
 
   request.on('data', function(data){
     socketServer.broadcast(data);
@@ -162,15 +188,12 @@ var streamServer = http.createServer( function(request, response) {
   });
 
   request.on('end',function(e) {
-    console.log('close stream request ! e -> ', e);
-    console.log('close stream request ! sloce socket etst -> ', request.socket.close);
-
+    console.log('NEVER NEVER !!!!!!!!!!!!!!!!! ! e -> ', e);
     // TEST 
     /* var index = STREAM_ARRAY.indexOf(item);
     if (index !== -1) {
       array.splice(index, 1);
     } */
-
     if (request.socket.recording) {
       request.socket.recording.close();
     }
@@ -185,3 +208,15 @@ var streamServer = http.createServer( function(request, response) {
 
 console.log('Listening for incomming MPEG-TS Stream on http://127.0.0.1:'+STREAM_PORT+'/<secret>');
 console.log('Awaiting WebSocket connections on ws://127.0.0.1:'+WEBSOCKET_PORT+'/');
+
+
+var XYCORD = require('./xy');
+
+const EventEmitter = require('events');
+const eventEmitter = new EventEmitter ();
+
+eventEmitter.on('xy-new-user', (e) => {
+  console.log('STREAM EVENT EMITTER !!', e.name);
+});
+
+XYCORD.INJECTOR(eventEmitter);

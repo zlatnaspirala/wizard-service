@@ -6,7 +6,6 @@
   "dependencies": {
     "bufferutil": "^4.0.6",
     "express": "^4.17.2",
-    "express-ws": "^5.0.2",
     "utf-8-validate": "^5.0.8",
     "ws": "^7.5.6"
   },
@@ -16,7 +15,6 @@
   "scripts": {
     "start": "node app.js supersecret 8081 8082",
     "relay": "node app.js supersecret 8081 8082",
-    "xy": "node xy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
@@ -25,12 +23,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zlatnaspirala/XYCoordinator"
+    "url": "git+https://github.com/zlatnaspirala/wizard-service"
   },
   "keywords": [
     "test"
   ],
   "author": "Nikola Lukic",
-  "license": "MIT",
+  "license": "https://maximumroulette.com",
   "homepage": "https://maximumroulette.com"
 }
