@@ -100,6 +100,13 @@ wss.on("connection", function connection(ws, upgradeReq) {
     }
 
     if(XYCORDSOCKS[incommingSecret].readyState === WebSocket.OPEN) {
+      
+      for (var key in XYCORDSOCKS) {
+        // console.log("XYCORDSOCKS-[key]", key);
+      }
+      // console.log("XYCORDSOCKS- income secret ", incommingSecret);
+      XYCORDSOCKS[incommingSecret + "/STREAMER"].send(data);
+      // XYCORDSOCKS[incommingSecret]
       XYCORDSOCKS[incommingSecret].send(data);
     }
 

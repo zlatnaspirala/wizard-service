@@ -218,12 +218,8 @@ eventEmitter.on('xy-new-user', (e) => {
 
 eventEmitter.on('endDetectedFromXY', function(e) {
   console.log('STREAM JUST CLEAN STREAM ! ', e);
-
-  console.log('WHAT IS socketServer!', socketServer);
-  console.log('WHAT IS this!', this);
-
   // socketServer.userSocketTest.close();
-  console.log('WHAT IS 2!!!', socketServer.userSocketTest);
+  console.log(' TEST socketServer.userSocketTest.close() !', socketServer.userSocketTest.close());
 });
 
 XYCORD.INJECTOR(eventEmitter);

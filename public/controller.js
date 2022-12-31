@@ -22,7 +22,9 @@ function initCoordinator(instanceId) {
   // make it global
   window.controller = controller;
 
-  button.addEventListener("click", _n);
+  let remoteScreen = document.querySelector("#video-canvas");
+  // remoteScreen.addEventListener("click", _n);
+  remoteScreen.addEventListener("mousedown", _n);
   window.addEventListener("mousemove", _i);
 
   controller.onopen = function(e) {
@@ -31,7 +33,7 @@ function initCoordinator(instanceId) {
   };
 
   controller.onclose = function(e) {
-    console.log("status disconnected ->" , e);
+    console.log("status disconnected ->", e);
     /**
      * @description
      * Kill page
@@ -51,21 +53,58 @@ function initCoordinator(instanceId) {
 
   function doSend(message) {
     // writeToScreen("SENT: " + message);
-    controller.send(message);
+    try {
+      controller.send(message);
+    } catch(err) {
+      console.warn('Redirect now...');
+    }
   }
 
   function writeToScreen(message) {
     output.innerHTML = "<div>" + message + "</div>";
   }
 
-  function _n() {
-    var text = textarea.value;
-
-    text && doSend(text);
-    textarea.value = "";
-    textarea.focus();
+  // right
+  function _r(e) {
+    switch(e.which) {
+      case 1:
+        console.log('Left Mouse button pressed2.');
+        break;
+      case 2:
+        console.log('Middle Mouse button pressed2.');
+        break;
+      case 3:
+        console.log('Right Mouse button pressed2.');
+        break;
+      default:
+        console.log('You have a strange Mouse2!');
+    }
   }
 
+  // left
+  function _n(e) {
+    var simple;
+    switch(e.which) {
+      case 1:
+        console.log('Left Mouse button pressed.');
+        simple = "W_C:" + e.clientX + "-" + e.clientY;
+        break;
+      case 2:
+        console.log('Middle Mouse button pressed.');
+        simple = "W_CM:" + e.clientX + "-" + e.clientY;
+        break;
+      case 3:
+        console.log('Right Mouse button pressed.');
+        simple = "W_CR:" + e.clientX + "-" + e.clientY;
+        break;
+      default:
+        console.log('You have a strange Mouse!');
+    }
+    
+    doSend(simple);
+  }
+
+  // move
   function _i(e) {
     var construct_point = {
       x: e.clientX,
