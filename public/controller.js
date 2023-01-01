@@ -25,6 +25,7 @@ function initCoordinator(instanceId) {
   let remoteScreen = document.querySelector("#video-canvas");
   // remoteScreen.addEventListener("click", _n);
   remoteScreen.addEventListener("mousedown", _n);
+  remoteScreen.addEventListener("mouseup", _up);
   window.addEventListener("mousemove", _i);
 
   controller.onopen = function(e) {
@@ -43,8 +44,7 @@ function initCoordinator(instanceId) {
   };
 
   controller.onmessage = function(e) {
-    // console.log("onmessage")
-    writeToScreen("<span>RESPONSE: " + e.data + "</span>");
+    writeToScreen("success:" + e.data);
   };
 
   controller.onerror = function(e) {
@@ -65,20 +65,26 @@ function initCoordinator(instanceId) {
   }
 
   // right
-  function _r(e) {
+  function _up(e) {
     switch(e.which) {
       case 1:
         console.log('Left Mouse button pressed2.');
+        var detRealZeroAxis = window.outerHeight - window.innerHeight;
+        var Y = parseFloat(e.clientY) - parseFloat(detRealZeroAxis);
+        simple = "W_CLUP:" + e.clientX + "-" + Y;
         break;
       case 2:
         console.log('Middle Mouse button pressed2.');
+        simple = "W_CMUP:" + e.clientX + "-" + e.clientY;
         break;
       case 3:
         console.log('Right Mouse button pressed2.');
+        simple = "W_CRUP:" + e.clientX + "-" + e.clientY;
         break;
       default:
         console.log('You have a strange Mouse2!');
     }
+    doSend(simple);
   }
 
   // left
@@ -87,7 +93,7 @@ function initCoordinator(instanceId) {
     switch(e.which) {
       case 1:
         console.log('Left Mouse button pressed.');
-        simple = "W_C:" + e.clientX + "-" + e.clientY;
+        simple = "W_CL:" + e.clientX + "-" + e.clientY;
         break;
       case 2:
         console.log('Middle Mouse button pressed.');
@@ -110,7 +116,11 @@ function initCoordinator(instanceId) {
       x: e.clientX,
       y: e.clientY,
     };
-    var simple = e.clientX + ";" + e.clientY;
+
+    var detRealZeroAxis = window.outerHeight - window.innerHeight;
+    var Y = parseFloat(e.clientY) - parseFloat(detRealZeroAxis);
+
+    var simple = e.clientX + ";" + Y;
     // doSend(JSON.stringify(construct_point));
     doSend(simple);
   }

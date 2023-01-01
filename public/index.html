@@ -41,6 +41,13 @@
       vertical-align: bottom;
     }
 
+    #reasonLabel {
+      font-size: larger;
+      color: white;
+      background: darkcyan;
+      width: fit-content;
+    }
+
     #output {
       overflow: auto;
       background-color: brown;
@@ -77,12 +84,11 @@
 
 <body>
   <div class="msg">
-    <h1>Wizard Remote Desktop 1.0</h1>
+    <h1>Wizard Remote Control 1.0</h1>
     <h2>Web Client part</h2>
-    <p>***</p>
+    <p>-------------------------------</p>
      <p id="reasonLabel"></p>
-     <p>***</p>
-     <p>Thank you for using Wizard Remote Desktop</p>
+     <p>Thank you for using Wizard Remote Control</p>
      <p>Created by Nikola Lukic</p>
      <p>https://maximumroulette.com</p>
      <h2>My open source projects:</h2>
@@ -93,7 +99,7 @@
 
   <script type="text/javascript">
     console.info("------------------------------- ");
-    console.info("-Wizard Remote Desktop Client - ");
+    console.info("-Wizard Remote Control Client - ");
     console.info("------------------------------- ");
     var query = window.location.search.substring(1);
     var reason = parse_query_string(query);

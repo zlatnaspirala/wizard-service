@@ -2,12 +2,24 @@ html,
 body {
   background-color: #111;
   text-align: center;
+  margin:0;
+  padding: 0;
+  overflow: hidden;
 }
 textarea {
   vertical-align: bottom;
 }
+
+#bottom-bar {
+  width: 90px;
+  height: 40px;
+  background-color: darkslategrey;
+}
+
 #output {
-  height: 100px;
+  left:0;
+  font-size: smaller;
+  height: 40px;
   overflow: auto;
   background-color: brown;
   color:cornsilk;
@@ -20,9 +32,12 @@ textarea {
 }
 
 .holder {
+  font-size: smaller;
   position: absolute;
+  display: flex;
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 100px
+  background-color: silver;
+  height: 40px;
 }
