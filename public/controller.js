@@ -16,6 +16,7 @@ function initCoordinator(instanceId) {
   var button = document.querySelector("button"),
     output = document.querySelector("#output"),
     textarea = document.querySelector("textarea"),
+    sendTextBtn = document.querySelector("#sendTextBtn"),
     wsUri = wsProtocol + "://" + window.location.hostname + ":20002/" + instanceId,
     controller = new WebSocket(wsUri);
 
@@ -27,6 +28,11 @@ function initCoordinator(instanceId) {
   remoteScreen.addEventListener("mousedown", _n);
   remoteScreen.addEventListener("mouseup", _up);
   window.addEventListener("mousemove", _i);
+
+  sendTextBtn.addEventListener('click', ()=> {
+    var simple = "KEYCODE:" + textarea.value;
+    doSend(simple);
+  })
 
   controller.onopen = function(e) {
     writeToScreen("status: connected => ", e);
@@ -52,7 +58,6 @@ function initCoordinator(instanceId) {
   };
 
   function doSend(message) {
-    // writeToScreen("SENT: " + message);
     try {
       controller.send(message);
     } catch(err) {
@@ -116,11 +121,7 @@ function initCoordinator(instanceId) {
       x: e.clientX,
       y: e.clientY,
     };
-
-    var detRealZeroAxis = window.outerHeight - window.innerHeight;
-    var Y = parseFloat(e.clientY) - parseFloat(detRealZeroAxis);
-
-    var simple = e.clientX + ";" + Y;
+    var simple = e.clientX + ";;;" + e.clientY;
     // doSend(JSON.stringify(construct_point));
     doSend(simple);
   }

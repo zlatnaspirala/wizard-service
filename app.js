@@ -61,20 +61,17 @@ var MAXIMUM_USERS = 1;
 var SOCKET_USERS = {};
 var STREAM_ARRAY = [];
 
-
 // HTTP Server to accept incomming MPEG-TS Stream from ffmpeg
 var streamServer = serverRunner.createServer(options, function(request, response) {
   var params = request.url.substr(1).split('/');
-
   console.log(`streamServer url  ${request.url}`);
   console.log("streamServer params  " + params);
 
   request.on('close', function(e) {
     STREAM_ARRAY = [];
-    // console.log('EXPERIMENTAL close stream detected : clear for now STREAM_ARRAY = []; ',SOCKET_USERS);
-    console.log('EXPERIMENTAL close stream detected : kill socket user ', params[1]);
+    console.log('close stream detected: kill socket user ', params[1]);
     if(typeof SOCKET_USERS[params[1]] !== 'undefined') {
-      console.log('EXPERIMENTAL SOCKET EXIST KILL HIM : kill socket user ', params[1]);
+      console.log('SOCKET EXIST KILL HIM : kill socket user ', params[1]);
       // SOCKET_USERS[params[1]].send("NIDZA-NIDZA");
       SOCKET_USERS[params[1]].close();
       eventEmitter.emit('end-stream', {id: params[1]});
@@ -181,6 +178,7 @@ socketServer.on('connection', function(socket, upgradeReq) {
     (upgradeReq || socket.upgradeReq).headers['user-agent'],
     '(' + socketServer.connectionCount + ' total)'
   );
+
   socket.on('close', function(code, message) {
     socketServer.connectionCount--;
     console.log('Disconnected WebSocket (' + SOCKET_USERS + ' total)');
@@ -208,18 +206,24 @@ socketServer.broadcast = function(data) {
   });
 };
 
-
+/**
+ * @description
+ * Call XY server part.
+ * It is signaling server between browser clietn 
+ * and c# wizard window desktop webSocket.
+ */
 var XYCORD = require('./xy');
 
 eventEmitter.on('xy-new-user', (e) => {
-  console.log('STREAM EVENT EMITTER !!', e.name);
+  console.log('EVENT xy-new-user =>', e.name);
 });
 
-
 eventEmitter.on('endDetectedFromXY', function(e) {
-  console.log('STREAM JUST CLEAN STREAM ! ', e);
-  // socketServer.userSocketTest.close();
-  console.log(' TEST socketServer.userSocketTest.close() !', socketServer.userSocketTest.close());
+  console.log('End detected from xy, just call close! ', e);
+  if (socketServer && socketServer.userSocketTest) {
+    socketServer.userSocketTest.close();
+    console.log('Called socketServer.userSocketTest.close()!');
+  }
 });
 
 XYCORD.INJECTOR(eventEmitter);

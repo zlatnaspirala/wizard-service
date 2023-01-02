@@ -8,21 +8,32 @@ body {
 }
 textarea {
   vertical-align: bottom;
+  background-color: brown;
+  color:cornsilk;
+}
+
+button {
+  font-size: smaller;
 }
 
 #bottom-bar {
-  width: 90px;
-  height: 40px;
-  background-color: darkslategrey;
+  width: 200px;
+  background-color: brown;
+  color:cornsilk;
+}
+
+.bottomItems {
+  display: flex;
+  padding-top: 1px;
+  border: 1px solid orangered;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 #output {
   left:0;
   font-size: smaller;
-  height: 40px;
   overflow: auto;
-  background-color: brown;
-  color:cornsilk;
 }
 #output > p {
   overflow-wrap: break-word;
@@ -32,12 +43,14 @@ textarea {
 }
 
 .holder {
+  box-shadow: 0px 0px 2px #ff8800;
   font-size: smaller;
   position: absolute;
   display: flex;
   left: 0;
   bottom: 0;
   width: 100%;
-  background-color: silver;
-  height: 40px;
+  background-color: brown;
+  color:cornsilk;
+  height: 20px;
 }
