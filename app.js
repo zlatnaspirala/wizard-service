@@ -14,7 +14,7 @@ var eventEmitter = new EventEmitter();
 
 app.use(express.static("public"));
 app.get("/", function(req, res) {
-  res.send("<h1>thanks for using goldenspiral software!</h1>");
+  res.send("<h1>Thank you for using goldenspiral software!</h1>");
 });
 
 if(process.platform == 'win32') {
@@ -69,17 +69,15 @@ var streamServer = serverRunner.createServer(options, function(request, response
 
   request.on('close', function(e) {
     STREAM_ARRAY = [];
-    console.log('close stream detected: kill socket user ', params[1]);
+    console.log('Close stream detected: kill socket user ', params[1]);
     if(typeof SOCKET_USERS[params[1]] !== 'undefined') {
-      console.log('SOCKET EXIST KILL HIM : kill socket user ', params[1]);
-      // SOCKET_USERS[params[1]].send("NIDZA-NIDZA");
+      console.log('Socket exist: kill socket user ', params[1]);
       SOCKET_USERS[params[1]].close();
       eventEmitter.emit('end-stream', {id: params[1]});
       SOCKET_USERS = {};
     }
   });
 
-  // TEST FIRST SUPER SECRET
   if(params[0] !== STREAM_SECRET) {
     console.log(
       'Failed Stream Connection: ' + request.socket.remoteAddress + ':' +
@@ -187,8 +185,6 @@ socketServer.on('connection', function(socket, upgradeReq) {
   });
 
   socketServer.userSocketTest = socket;
-  // endDetectedFromXY
-
 });
 
 socketServer.broadcast = function(data) {
